@@ -1,0 +1,10 @@
+general:
+  test_dataset: TUTSoundEvents_2016_DevelopmentSet
+  train_dataset: TUTSoundEvents_2016_EvaluationSet
+# ==========================================================
+# Paths
+# ==========================================================
+
+
+  non_vibration_data: vibration_sound/190701/non_vibration_sound_data/
+  s3_bucket_name : ruskopilotproject
