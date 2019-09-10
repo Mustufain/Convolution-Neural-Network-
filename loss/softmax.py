@@ -13,7 +13,6 @@ def SoftmaxLoss(X, labels):
     predictions = softmax(X)
     log_likelihood = -np.log(predictions[range(m), labels])
     loss = np.sum(log_likelihood) / m
-
     grad = predictions.copy()
     grad[range(m), labels] -= 1
     grad /= m

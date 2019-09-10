@@ -28,7 +28,7 @@ def convert_to_one_hot(Y, C):
     return Y
 
 
-def conver_prob_into_class(self, predictions):
+def conver_prob_into_class(predictions):
     highest_prob = np.max(predictions)
     probs_ = np.copy(predictions)
     probs_[probs_ == highest_prob] = 1
@@ -36,9 +36,8 @@ def conver_prob_into_class(self, predictions):
     return probs_
 
 
-def accuracy(self, predictions, labels):
-    predicted_labels = self.conver_prob_into_class(predictions)
-    return (predicted_labels == labels).all(axis=0).mean()
+def accuracy(predictions, labels):
+    return np.mean(predictions == labels)
 
 
 def get_minibatches(X, Y, mini_batch_size=64):
@@ -53,6 +52,7 @@ def get_minibatches(X, Y, mini_batch_size=64):
     Returns:
     mini_batches -- list of synchronous (mini_batch_X, mini_batch_Y)
     """
+    np.random.seed(1)
     m = X.shape[0]
     mini_batches = []
     permutation = list(np.random.permutation(m))

@@ -1,8 +1,5 @@
-"""
-conv -> relu - > pool -> conv -> relu -> pool -> fc -> relu -> fc -> softmax
-"""
-from loss.softmax import SoftmaxLoss
-
+from loss.softmax import SoftmaxLoss, softmax
+import numpy as np
 
 class CNN(object):
 
@@ -33,9 +30,11 @@ class CNN(object):
         """
         A = self.forward(X)
         loss, dA = SoftmaxLoss(A, y)
+        assert (A.shape == dA.shape)
         grads = self.backward(dA)
         return loss, grads
 
     def predict(self, X):
         X = self.forward(X)
-        return
+        prediction = np.argmax(softmax(X), axis=1)
+        return prediction

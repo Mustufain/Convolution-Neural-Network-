@@ -3,7 +3,9 @@ import numpy as np
 
 class Convolution(object):
 
-    def __init__(self, input_dim, pad, stride, num_filters, filter_size):
+    def __init__(self, input_dim, pad, stride, num_filters, filter_size, seed):
+        self.seed = seed
+        np.random.seed(self.seed)
         self.num_filters = num_filters
         self.filter_size = filter_size
         self.pad = pad
@@ -69,10 +71,11 @@ class Convolution(object):
         Returns:
 
         """
+        self.A_prev = A_prev
         filter_size, filter_size, n_C_prev, n_C = self.W.shape
-        m, n_H_prev, n_W_prev, n_C_prev = A_prev.shape
+        m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
         Z = np.empty((m, self.n_H, self.n_W, self.n_C))
-        A_prev_pad = self.zero_pad(A_prev, self.pad)
+        A_prev_pad = self.zero_pad(self.A_prev, self.pad)
         for i in range(m):
             a_prev_pad = A_prev_pad[i, :, :, :]
             for h in range(0, a_prev_pad.shape[0]):
@@ -96,30 +99,33 @@ class Convolution(object):
 
         Returns:
         """
-        n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
+
+        m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
         f, f, n_C_prev, n_C = self.W.shape
-        n_H, n_W, n_C = dZ.shape
-        dA_prev = np.random.randn(n_H_prev, n_W_prev, n_C_prev)
+        m, n_H, n_W, n_C = dZ.shape
+        dA_prev = np.random.randn(m, n_H_prev, n_W_prev, n_C_prev)
         dW = np.random.randn(f, f, n_C_prev, n_C)
         db = np.zeros(shape=(1, 1, 1, self.num_filters))
-
         # Pad A_prev and dA_prev
         A_prev_pad = self.zero_pad(self.A_prev, self.pad)
         dA_prev_pad = self.zero_pad(dA_prev, self.pad)
+        for i in range(m):
+            a_prev_pad = A_prev_pad[i]
+            da_prev_pad = dA_prev_pad[i]
+            for h in range(n_H):
+                for w in range(n_W):
+                    for c in range(n_C):
+                        vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
+                            h, w, self.filter_size, self.stride)
+                        if horiz_end <= a_prev_pad.shape[1] and vert_end <= a_prev_pad.shape[0]:  # bounds
+                            a_slice_prev = a_prev_pad[
+                                vert_start:vert_end, horiz_start:horiz_end, :]
+                            da_prev_pad[
+                                vert_start:vert_end, horiz_start:horiz_end, :] += self.W[:, :, :, c] * dZ[i, h, w, c]
+                            dW[:, :, :, c] += a_slice_prev * dZ[i, h, w, c]
+                            db[:, :, :, c] += dZ[i, h, w, c]
 
-        for h in range(n_H):
-            for w in range(n_W):
-                for c in range(n_C):
-                    vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
-                        h, w, self.filter_size, self.stride)
-                    if horiz_end <= A_prev_pad.shape[1] and vert_end <= A_prev_pad.shape[0]:  # bounds
-                        a_slice_prev = A_prev_pad[
-                            vert_start:vert_end, horiz_start:horiz_end, :]
-                        dA_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :] += self.W[:, :, c] * dZ[h, w, c]
-                        dW[:, :, c] += a_slice_prev * dZ[h, w, c]
-                        db[:, :, c] += dZ[h, w, c]
-
-        dA_prev[:, :, :] = dA_prev_pad[self.pad:-self.pad, self.pad:-self.pad, :]
-        assert(dA_prev.shape == (n_H_prev, n_W_prev, n_C_prev))
+            dA_prev[i, :, :, :] = da_prev_pad[self.pad:-self.pad, self.pad:-self.pad, :]
+        assert(dA_prev.shape == (m, n_H_prev, n_W_prev, n_C_prev))
 
         return dA_prev, [dW, db]

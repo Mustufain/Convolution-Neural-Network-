@@ -20,4 +20,4 @@ class Relu(object):
         dZ = np.array(dA, copy=True)
         dZ[Z <= 0] = 0
         assert (dZ.shape == self.Z.shape)
-        return dZ
+        return dZ, []
