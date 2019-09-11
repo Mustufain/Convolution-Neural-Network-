@@ -74,6 +74,7 @@ class Adam(object):
     def minimize(self):
         costs = []
         t = 0
+
         VdW, Vdb, SdW, Sdb = self.initialize_adam()
         for i in tqdm(range(self.epoch)):
             start = time.time()
@@ -102,5 +103,6 @@ class Adam(object):
                    'train_acc:', train_acc,
                    'val_acc:', val_acc)
             costs.append(loss)
+        print ('total_cost', costs)
 
         return self.model, costs

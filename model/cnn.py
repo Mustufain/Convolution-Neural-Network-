@@ -1,6 +1,7 @@
 from loss.softmax import SoftmaxLoss, softmax
 import numpy as np
 
+
 class CNN(object):
 
     def __init__(self, layers):
@@ -25,8 +26,16 @@ class CNN(object):
 
     def fit(self, X, y):
         """
-        X -- input data, of shape (number of examples, n_width, n_height, n_channel)
-        Y -- true "label" vector, of shape (1, number of examples)
+        Fit the training data.
+
+        Parameters:
+        X -- input data, numpy array of shape (m, n_H, n_W, n_C)
+        Y -- true "label" vector, numpy array of shape (1, m)
+
+        Returns:
+        loss -- Softmax loss -- float
+        grads -- gradients backpropogated through each layer
+
         """
         A = self.forward(X)
         loss, dA = SoftmaxLoss(A, y)
@@ -35,6 +44,16 @@ class CNN(object):
         return loss, grads
 
     def predict(self, X):
+        """
+        Predict on test data.
+
+        Parameters:
+        X -- input data, numpy array of shape (m, n_H, n_W, n_C)
+
+        Returns:
+        prediction -- predictions on test data, numpy array of shape (m, 1)
+        """
+
         X = self.forward(X)
         prediction = np.argmax(softmax(X), axis=1)
         return prediction

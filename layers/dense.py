@@ -16,6 +16,17 @@ class Dense(object):
         self.params = [self.W, self.b]
 
     def forward(self, A_prev):
+        """
+        Forward propogation of Dense layer.
+
+        Parameters:
+        A_prev -- input data -- numpy of array shape (m, input_dim)
+
+        Returns:
+        Z -- flatten numpy array of shape (m, output_dim)
+
+        """
+
         m = A_prev.shape[0]
         self.A_prev = A_prev
         Z = np.dot(self.A_prev, self.W) + self.b
@@ -24,11 +35,17 @@ class Dense(object):
 
     def backward(self, dA):
         """
-        Implement the backward propogation
-        for FC layer.
-        """
+        Backward propogation for Dense layer.
 
-        #m = dA.shape[0]
+        Parameters:
+        dA -- gradient of cost with respect to the output of the Dense layer,
+              same shape as Z
+
+        Returns:
+        dA_prev -- gradient of cost with respect to the input of the Dense layer,
+                   same shape as A_prev
+
+        """
         dW = np.dot(np.transpose(self.A_prev), dA)
         db = np.sum(dA, axis=0)
         dA_prev = np.dot(dA, np.transpose(self.W))

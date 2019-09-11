@@ -24,16 +24,19 @@ class Convolution(object):
 
     def zero_pad(self, X, pad):
         """
-        Pads with zeros all images of the dataset X. Zeros are added around the
-        border of an image.
+        Set padding to the image X.
+
+        Pads with zeros all images of the dataset X.
+        Zeros are added around the border of an image.
+
         Parameters:
-        X -- Image -- matrix of shape (m, n_H, n_W, n_C)
+        X -- Image -- numpy array of shape (m, n_H, n_W, n_C)
         pad -- padding amount -- int
 
         Returns:
-        X_pad -- Image padded with zeros around width and height. -- matrix of shape (m, n_H + 2*pad, n_W + 2*pad, n_C)
-        """
+        X_pad -- Image padded with zeros around width and height. -- numpy array of shape (m, n_H + 2*pad, n_W + 2*pad, n_C)
 
+        """
         X_pad = np.pad(X, ((0, 0), (pad, pad), (pad, pad), (0, 0)), 'constant')
         return X_pad
 
@@ -42,18 +45,34 @@ class Convolution(object):
         Apply a filter defined by W on a single slice of an image.
 
         Parameters:
-        image_slice -- slice of input data of shape (f, f, n_C_prev)
-        W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)
-        b -- Bias parameters contained in a window - matrix of shape (1, 1, 1)
+        image_slice -- slice of input data -- numpy array of shape (f, f, n_C_prev)
+        W -- Weight parameters contained in a window - numpy array of shape (f, f, n_C_prev)
+        b -- Bias parameters contained in a window - numpy array of shape (1, 1, 1)
 
         Returns:
         Z -- a scalar value, result of convolving the sliding window (W, b) on image_slice
-        """
 
+        """
         Z = np.sum(np.multiply(image_slice, W)) + b  # ( W*X + b )
         return Z
 
     def get_corners(self, height, width, filter_size, stride):
+        """
+        Get corners of the image relative to stride.
+
+        Parameters:
+        height -- height of an image -- int
+        width -- width of an image -- int
+        filter_size -- size of filter -- int
+        stride -- amount by which the filter shifts -- int
+
+        Returns:
+        vert_start -- a scalar value, upper left corner of the box.
+        vert_end -- a scalar value, upper right corner of the box.
+        horiz_start -- a scalar value, lower left corner of the box.
+        horiz_end -- a scalar value, lower right corner of the box.
+
+        """
         vert_start = height * stride
         vert_end = vert_start + filter_size
         horiz_start = width * stride
@@ -62,13 +81,16 @@ class Convolution(object):
 
     def forward(self, A_prev):
         """
-        Forward proporgation for convolution. This takes activations
-        from previous layer and then convolve it with a filter defined by W with bias
-        b.
+        Forward proporgation for convolution.
+
+        This takes activations from previous layer and then convolve it
+        with a filter defined by W with bias b.
 
         Parameters:
+        A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
 
         Returns:
+        Z -- convolution output, numpy array of shape (m, n_H, n_W, n_C)
 
         """
         self.A_prev = A_prev
@@ -96,10 +118,17 @@ class Convolution(object):
         Backward proporgation for convolution.
 
         Parameters:
+        dZ -- gradient of the cost with respect to the output of the conv layer (Z), numpy array of shape (m, n_H, n_W, n_C)
 
         Returns:
-        """
+        dA_prev -- gradient of the cost with respect to the input of the conv
+                   layer (A_prev), numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+        dW -- gradient of the cost with respect to the weights of the conv layer (W)
+                  numpy array of shape (f, f, n_C_prev, n_C)
+        db -- gradient of the cost with respect to the biases of the conv layer (b)
+                  numpy array of shape (1, 1, 1, n_C)
 
+        """
         m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
         f, f, n_C_prev, n_C = self.W.shape
         m, n_H, n_W, n_C = dZ.shape
