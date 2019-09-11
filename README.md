@@ -31,6 +31,6 @@ Weights are initialized using Xavier initialization and Adam optimizer is used f
 4. ```python run.py``` ;
 
 ## Credits 
-1. Andrew Ng [course] (https://www.coursera.org/learn/convolutional-neural-networks-tensorflow) on Coursera.
-2. [Alex net] (https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
-3. [Adam optimizer] (https://arxiv.org/pdf/1412.6980.pdf) 
+1. Andrew Ng [course](https://www.coursera.org/learn/convolutional-neural-networks-tensorflow) on Coursera.
+2. [Alex net](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+3. [Adam optimizer](https://arxiv.org/pdf/1412.6980.pdf) 
