@@ -94,10 +94,10 @@ class Adam(object):
             # Print the cost every epoch
             end = time.time()
             epoch_time = end - start
-            train_acc = accuracy(
-                    self.y_train, self.model.predict(self.X_train))
-            val_acc = accuracy(
-                    self.y_test, self.model.predict(self.X_test))
+            train_acc = accuracy(self.model.predict(self.X_train),
+                                 self.y_train)
+            val_acc = accuracy(self.model.predict(self.X_test),
+                               self.y_test)
             print ("Cost after epoch %i: %f" % (i, loss),
                    'time (s):', epoch_time,
                    'train_acc:', train_acc,

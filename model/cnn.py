@@ -56,4 +56,5 @@ class CNN(object):
 
         X = self.forward(X)
         prediction = np.argmax(softmax(X), axis=1)
+        prediction = prediction.reshape(prediction.shape[0], 1)
         return prediction

@@ -24,7 +24,7 @@ def load_dataset():
 
 
 def convert_to_one_hot(Y, C):
-    Y = np.eye(C)[Y.reshape(-1)].T
+    Y = np.eye(C)[Y.reshape(-1)]
     return Y
 
 
@@ -37,6 +37,8 @@ def conver_prob_into_class(predictions):
 
 
 def accuracy(predictions, labels):
+    labels = labels.T
+    assert (predictions.shape == labels.shape)
     return np.mean(predictions == labels)
 
 

@@ -43,7 +43,7 @@ def make_cnn(input_dim, num_of_classes):
 
 
 if __name__ == '__main__':
-    
+
     train_set_x, train_set_y, test_set_x, test_set_y, classes = load_dataset()
     num_of_classes = len(classes)
     train_set_x = train_set_x / 255
