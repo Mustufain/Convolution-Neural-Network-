@@ -93,6 +93,7 @@ class Convolution(object):
         Z -- convolution output, numpy array of shape (m, n_H, n_W, n_C)
 
         """
+        np.random.seed(self.seed)
         self.A_prev = A_prev
         filter_size, filter_size, n_C_prev, n_C = self.W.shape
         m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
@@ -129,6 +130,7 @@ class Convolution(object):
                   numpy array of shape (1, 1, 1, n_C)
 
         """
+        np.random.seed(self.seed)
         m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
         f, f, n_C_prev, n_C = self.W.shape
         m, n_H, n_W, n_C = dZ.shape

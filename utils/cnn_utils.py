@@ -39,7 +39,7 @@ def conver_prob_into_class(predictions):
 def accuracy(predictions, labels):
     labels = labels.T
     assert (predictions.shape == labels.shape)
-    return np.mean(predictions == labels)
+    return np.mean(predictions == labels, axis=0)
 
 
 def get_minibatches(X, Y, mini_batch_size=64):

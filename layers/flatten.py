@@ -3,7 +3,9 @@ import numpy as np
 
 class Flatten(object):
 
-    def __init__(self):
+    def __init__(self, seed):
+        self.seed = seed
+        np.random.seed(self.seed)
         self.params = []
 
     def forward(self, A_prev):
@@ -17,6 +19,7 @@ class Flatten(object):
         Z -- flatten numpy array of shape (m, n_H_prev * n_W_prev * n_C_prev)
 
         """
+        np.random.seed(self.seed)
         self.A_prev = A_prev
         output = np.prod(self.A_prev.shape[1:])
         m = self.A_prev.shape[0]
@@ -38,6 +41,7 @@ class Flatten(object):
                    same shape as A_prev
 
         """
+        np.random.seed(self.seed)
         dA_prev = dA.reshape(self.A_prev.shape)
         assert (dA_prev.shape == self.A_prev.shape)
         return dA_prev, []

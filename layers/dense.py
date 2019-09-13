@@ -26,7 +26,7 @@ class Dense(object):
         Z -- flatten numpy array of shape (m, output_dim)
 
         """
-
+        np.random.seed(self.seed)
         m = A_prev.shape[0]
         self.A_prev = A_prev
         Z = np.dot(self.A_prev, self.W) + self.b
@@ -46,6 +46,7 @@ class Dense(object):
                    same shape as A_prev
 
         """
+        np.random.seed(self.seed)
         dW = np.dot(np.transpose(self.A_prev), dA)
         db = np.sum(dA, axis=0)
         dA_prev = np.dot(dA, np.transpose(self.W))
