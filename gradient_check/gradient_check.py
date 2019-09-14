@@ -9,11 +9,12 @@ from layers.dense import Dense
 from model.cnn import CNN
 import copy
 from tqdm import tqdm
+from scipy.optimize import check_grad
 
 def make_cnn(input_dim, num_of_classes):
     conv1 = Convolution(input_dim=input_dim, pad=2,
                         stride=2,
-                        num_filters=10,
+                        num_filters=1,
                         filter_size=3, seed=1)
     relu1 = Relu()
     maxpool1 = Maxpool(input_dim=conv1.output_dim,
@@ -85,13 +86,17 @@ def vector_to_param(theta, params):
 
     return new_param
 
-def set_param(new_param, cnn):
-    for param in new_param:
-        if len(param) is not 0: # learnable params
-            cnn.W = param[0]
-            cnn.b = param[1]
-    return cnn
-
+def compare(new_param, old_param):
+    different_value = []
+    for index in range(len(new_param)):
+        if len(new_param[index]) is not 0:
+            w_value = np.sum(new_param[index][0] != old_param[index][0])
+            b_value = np.sum(new_param[index][1] !=  old_param[index][1])
+            different_value.append(w_value)
+            different_value.append(b_value)
+        else:
+            assert (new_param[index] == old_param[index])
+    return sum(different_value)
 
 def grad_check():
 
@@ -117,17 +122,22 @@ def grad_check():
     assert (len(grads_values) == len(parameters_values))
     for i in tqdm(range(0, num_parameters)):
 
-        thetaplus = np.copy(parameters_values)
+
+        thetaplus = copy.deepcopy(parameters_values)
         thetaplus[i][0] = thetaplus[i][0] + epsilon # parameters
         new_param = vector_to_param(thetaplus, initial_params)
-        cnn = set_param(new_param, cnn)
+        difference = compare(new_param, initial_params)
+        assert ( difference == 1) # make sure only one parameter is changed
+        cnn.params = new_param
         A = cnn.forward(train_set_x)
         J_plus[i], _ = SoftmaxLoss(A, train_set_y)
 
-        thetaminus = np.copy(parameters_values)
+        thetaminus = copy.deepcopy(parameters_values)
         thetaminus[i][0] = thetaminus[i][0] - epsilon
         new_param = vector_to_param(thetaminus, initial_params)
-        cnn = set_param(new_param, cnn)
+        difference = compare(new_param, initial_params)
+        assert (difference == 1)  # make sure only one parameter is changed
+        cnn.params = new_param
         A = cnn.forward(train_set_x)
         J_minus[i], _ = SoftmaxLoss(A, train_set_y)
 

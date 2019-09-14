@@ -11,9 +11,10 @@ class CNN(object):
             self.params.append(layer.params)
 
     def forward(self, X):
-        for layer in self.layers:
+        for layer in range(0, len(self.layers)):
             # output of last layer serves as input of next layer
-            X = layer.forward(X)
+            self.layers[layer].params = self.params[layer]
+            X = self.layers[layer].forward(X)
         return X
 
     def backward(self, dA):
@@ -45,13 +46,13 @@ class CNN(object):
 
     def predict(self, X):
         """
-        Predict on test data.
+        Predict on tests data.
 
         Parameters:
         X -- input data, numpy array of shape (m, n_H, n_W, n_C)
 
         Returns:
-        prediction -- predictions on test data, numpy array of shape (m, 1)
+        prediction -- predictions on tests data, numpy array of shape (m, 1)
         """
 
         X = self.forward(X)

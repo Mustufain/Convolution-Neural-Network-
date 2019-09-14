@@ -38,6 +38,7 @@ def conver_prob_into_class(predictions):
 
 def accuracy(predictions, labels):
     labels = labels.T
+    print (predictions.shape, labels.shape)
     assert (predictions.shape == labels.shape)
     return np.mean(predictions == labels, axis=0)
 

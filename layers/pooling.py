@@ -36,6 +36,7 @@ class Maxpool(object):
         horiz_end = horiz_start + filter_size
         return vert_start, vert_end, horiz_start, horiz_end
 
+
     def forward(self, A_prev):
         """
         Forward prpogation of the pooling layer.
@@ -49,18 +50,18 @@ class Maxpool(object):
         """
         self.A_prev = A_prev
         m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
-        Z = np.random.randn(m, self.n_H, self.n_W, n_C_prev)
-        for i in range(0, m):
+        Z = np.empty((m, self.n_H, self.n_W, n_C_prev))
+        for i in range(m):
             a_prev = self.A_prev[i]
-            for h in range(0, a_prev.shape[0]):
-                for w in range(0, a_prev.shape[1]):
-                    for c in range(n_C_prev):
+            for h in range(self.n_H):
+                for w in range(self.n_W):
+                    for c in range(self.n_C):
                         vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
                             h, w, self.filter_size, self.stride)
-                        if horiz_end <= a_prev.shape[1] and vert_end <= a_prev.shape[0]:
-                            a_slice_prev = a_prev[
+                        #if horiz_end <= a_prev.shape[1] and vert_end <= a_prev.shape[0]:
+                        a_slice_prev = a_prev[
                                 vert_start:vert_end, horiz_start:horiz_end, c]
-                            Z[i, h, w, c] = np.max(a_slice_prev)
+                        Z[i, h, w, c] = np.max(a_slice_prev)
         assert(Z.shape == (m, self.n_H, self.n_W, n_C_prev))
         return Z
 
@@ -95,7 +96,7 @@ class Maxpool(object):
         """
         m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
         m, n_H, n_W, n_C = dA.shape
-        dA_prev = np.random.randn(m, n_H_prev, n_W_prev, n_C_prev)
+        dA_prev = np.zeros((m, n_H_prev, n_W_prev, n_C_prev))
         for i in range(m):
             a_prev = self.A_prev[i]
             for h in range(n_H):
@@ -103,12 +104,12 @@ class Maxpool(object):
                     for c in range(n_C):
                         vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
                             h, w, self.filter_size, self.stride)
-                        if horiz_end <= a_prev.shape[1] and vert_end <= a_prev.shape[0]:  # bounds
-                            a_prev_slice = a_prev[
+                        #if horiz_end <= a_prev.shape[1] and vert_end <= a_prev.shape[0]:  # bounds
+                        a_prev_slice = a_prev[
                                 vert_start:vert_end, horiz_start:horiz_end, c]
-                            mask = self.create_mask_from_window(a_prev_slice)
-                            dA_prev[
+                        mask = self.create_mask_from_window(a_prev_slice)
+                        dA_prev[
                                 i, vert_start: vert_end, horiz_start: horiz_end,
-                                c] += np.multiply(mask, dA[i, h, w, c])
+                                c] += mask * dA[i, h, w, c]
         assert(dA_prev.shape == self.A_prev.shape)
         return dA_prev, []

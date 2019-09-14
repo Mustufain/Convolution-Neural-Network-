@@ -13,7 +13,7 @@ import numpy as np
 def make_cnn(input_dim, num_of_classes):
     conv1 = Convolution(input_dim=input_dim, pad=2,
                         stride=2,
-                        num_filters=10,
+                        num_filters=1,
                         filter_size=3, seed=1)
     relu1 = Relu()
     maxpool1 = Maxpool(input_dim=conv1.output_dim,
@@ -29,10 +29,10 @@ def make_cnn(input_dim, num_of_classes):
     #                   stride=1)
     flatten = Flatten(seed=1)
     dense1 = Dense(input_dim=np.prod(maxpool1.output_dim),
-                   output_dim=120, seed=1)
-    relu3 = Relu()
-    dense2 = Dense(input_dim=dense1.output_dim,
                    output_dim=6, seed=1)
+    #relu3 = Relu()
+    #dense2 = Dense(input_dim=dense1.output_dim,
+    #               output_dim=6, seed=1)
     #relu4 = Relu()
     #dense3 = Dense(input_dim=dense2.output_dim,
     #               output_dim=num_of_classes, seed=1)
@@ -40,7 +40,7 @@ def make_cnn(input_dim, num_of_classes):
     #layers = [conv1, relu1, maxpool1, dense1,
     #          #conv2, relu2, maxpool2, flatten, dense1, relu3,
     #          dense2, relu4, dense3]
-    layers = [conv1, relu1, maxpool1, flatten, dense1, relu3, dense2]
+    layers = [conv1, relu1, maxpool1, flatten, dense1]
     return layers
 
 
@@ -54,11 +54,11 @@ if __name__ == '__main__':
     train_set_x = train_set_x / 255
     test_set_x = test_set_x / 255
 
-    # test ## test with 100 examples
-    train_set_x = train_set_x[0:500:, :, :]
-    train_set_y = train_set_y[:, 0:500]
-    test_set_x = test_set_x[0:60, :, :]
-    test_set_y = test_set_y[:, 0:60]
+    # tests ## tests with 100 examples
+    #train_set_x = train_set_x[0:500:, :, :]
+    #train_set_y = train_set_y[:, 0:500]
+    #test_set_x = test_set_x[0:60, :, :]
+    #test_set_y = test_set_y[:, 0:60]
     #######
 
     input_dim = train_set_x.shape[1:]
