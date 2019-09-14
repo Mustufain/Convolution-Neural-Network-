@@ -16,8 +16,7 @@ class Convolution(object):
         self.n_C = num_filters
         self.output_dim = (self.n_H, self.n_W, self.n_C)
         self.W = np.random.randn(
-            self.filter_size, self.filter_size, self.input_dim[-1], num_filters) * np.sqrt(2 / np.prod(self.input_dim)
-                                                                                           + np.prod(self.output_dim))
+            self.filter_size, self.filter_size, self.input_dim[-1], num_filters) / np.sqrt(num_filters / 2.)
         #self.W = np.random.normal(  # Xavier Initialization
         #    loc=0.0, scale=np.sqrt(
         #        2 / ((self.filter_size * self.filter_size * self.input_dim[-1]))),

@@ -9,12 +9,23 @@ def test_conv_step():
     A_prev = np.random.randn(4, 4, 3)
     W = np.random.randn(4, 4, 3)
     b = np.random.randn(1, 1, 1)
-    input_dim = A_prev.shape[1:]
+    input_dim = A_prev.shape
     conv = Convolution(input_dim=input_dim, pad=2, stride=2,
                        num_filters=8,
                        filter_size=2, seed=1)
     Z = conv.convolve(A_prev, W, b)
     assert (round(Z, 11) == -6.99908945068)
+
+def test_zero_pad():
+    np.random.seed(1)
+    x = np.random.randn(4, 3, 3, 2)
+    input_dim = x.shape[1:]
+    conv = Convolution(input_dim=input_dim, pad=2, stride=2,
+                       num_filters=8,
+                       filter_size=2, seed=1)
+    x_pad = conv.zero_pad(x, 2)
+    assert (x_pad.shape == (4, 7, 7, 2))
+    assert (np.sum(x_pad[1, 1]) == 0)
 
 def test_conv():
 
@@ -105,6 +116,7 @@ def test_pool():
 
     assert (round(np.mean(dA), 12) == 0.145713902729)
     assert np.array_equal(np.around(dA_prev[1, 1], 8), target_dA_prev) == True
+
 
 
 

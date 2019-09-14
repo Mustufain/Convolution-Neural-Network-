@@ -9,7 +9,7 @@ from layers.dense import Dense
 from model.cnn import CNN
 import copy
 from tqdm import tqdm
-from scipy.optimize import check_grad
+
 
 def make_cnn(input_dim, num_of_classes):
     conv1 = Convolution(input_dim=input_dim, pad=2,

@@ -11,17 +11,11 @@ Note: The purpose of this repository is to understand what goes benath the layer
 2. Relu 
 3. Max pool 
 4. Convolution
-5. Relu
-6. Maxpool
-7. Flatten
-8. Dense
-9. Relu
-10. Dense
-11. Relu 
-12. Dense
-13. Softmax
+5. Flatten
+7. Dense
+8. Softmax
 
-Weights are initialized using Xavier initialization and Adam optimizer is used for training the network.
+Adam optimizer is used for training the network.
 
 ## Usage
 
@@ -29,6 +23,8 @@ Weights are initialized using Xavier initialization and Adam optimizer is used f
 2. ```pyenv activate my-virtual-env-3.6.5 ``` ; activate the virtual environment
 3. ```pip install -r requirements.txt``` ; Install dependencies
 4. ```python run.py``` ;
+5. ```python run.py --debug``` ; Run the network in debug mode which does the gradient checking to make sure backpropogation is correct. 
+6. ```pytest``` ; Runs all the tests for smooth running of forward propogation.   
 
 ## Credits 
 1. Andrew Ng [course](https://www.coursera.org/learn/convolutional-neural-networks-tensorflow) on Coursera.
