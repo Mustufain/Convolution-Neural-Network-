@@ -43,38 +43,60 @@ class Adam(object):
         return VdW, Vdb, SdW, Sdb
 
     def update_parameters(self, VdW, Vdb, SdW, Sdb, grads, t):
+
+        VdW_corrected = [np.zeros_like(v) for v in VdW]
+        Vdb_corrected = [np.zeros_like(v) for v in Vdb]
+        SdW_corrected = [np.zeros_like(s) for s in SdW]
+        Sdb_corrected = [np.zeros_like(s) for s in Sdb]
+
         # compute dW, db using current mini batch
+
         grads = list(reversed(grads))
         for i in range(len(grads)):
             if len(grads[i]) is not 0:   # layer which contains weights and biases
+
                 # Moving average of the gradients (Momentum)
-                VdW[i] = self.beta1 * VdW[i] + (1 - self.beta1) * grads[i][0]
-                Vdb[i] = self.beta1 * Vdb[i] + (1 - self.beta1) * grads[i][1]
+
+                a = self.beta1 * VdW[i]
+                b = (1 - self.beta1) * grads[i][0]
+                VdW[i] = np.add(a, b)
+
+                a = self.beta1 * Vdb[i]
+                b = (1 - self.beta1) * grads[i][1]
+                Vdb[i] = np.add(a, b)
 
                 # Moving average of the squared gradients. (RMSprop)
-                SdW[i] = self.beta2 * SdW[i] + (1-self.beta2) * grads[i][0] ** 2
-                Sdb[i] = self.beta2 * Sdb[i] + (1-self.beta2) * grads[i][1] ** 2
+                a = self.beta2 * SdW[i]
+                b = (1-self.beta2) * np.power(grads[i][0], 2)
+                SdW[i] = np.add(a, b)
+
+                a = self.beta2 * Sdb[i]
+                b = (1-self.beta2) * np.power(grads[i][1], 2)
+                Sdb[i] = np.add(a, b)
 
                 # Compute bias-corrected first moment estimate
-                VdW[i] / 1-(self.beta1 ** t)
-                Vdb[i] / 1-(self.beta1 ** t)
+
+                den = (1-(self.beta1 ** t))
+                VdW_corrected[i] = np.divide(VdW[i], den)
+                Vdb_corrected[i] = np.divide(Vdb[i], den)
 
                 # Compute bias-corrected second raw moment estimate
-                SdW[i] / 1-(self.beta2 ** t)
-                Sdb[i] / 1-(self.beta2 ** t)
-                W = self.model.params[i][0]
-                b = self.model.params[i][1]
+                den = 1-(self.beta2 ** t)
+                SdW_corrected[i] = np.divide(SdW[i], den)
+                Sdb_corrected[i] = np.divide(Sdb[i], den)
+
                 # weight update
-                W = W - self.learning_rate * (VdW[i]/(np.sqrt(SdW[i]) + self.epsilon))
+                den = np.sqrt(SdW_corrected[i]) + self.epsilon
+                self.model.params[i][0] = self.model.params[i][0] - self.learning_rate * np.divide(VdW_corrected[i], den)
+
                 # bias update
-                b = b - self.learning_rate * (Vdb[i]/(np.sqrt(Sdb[i]) + self.epsilon))
-                self.model.layers[i].W = W
-                self.model.layers[i].b = b
+                den = np.sqrt(Sdb_corrected[i]) + self.epsilon
+                self.model.params[i][1] = self.model.params[i][1] - self.learning_rate * np.divide(Vdb_corrected[i], den)
 
     def minimize(self):
         costs = []
         t = 0
-
+        np.random.seed(1)
         VdW, Vdb, SdW, Sdb = self.initialize_adam()
         for i in tqdm(range(self.epoch)):
             start = time.time()
@@ -91,6 +113,7 @@ class Adam(object):
                 t = t + 1  # Adam counter
                 # weight update
                 self.update_parameters(VdW, Vdb, SdW, Sdb, grads, t)
+
             # Print the cost every epoch
             end = time.time()
             epoch_time = end - start

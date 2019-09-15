@@ -40,7 +40,7 @@ def accuracy(predictions, labels):
     labels = labels.T
     print (predictions.shape, labels.shape)
     assert (predictions.shape == labels.shape)
-    return np.mean(predictions == labels, axis=0)
+    return np.mean(predictions == labels, axis=0)[0]
 
 
 def get_minibatches(X, Y, mini_batch_size=64):

@@ -8,6 +8,7 @@ from optimizer.adam import Adam
 from utils.cnn_utils import load_dataset
 from gradient_check.gradient_check import grad_check
 import numpy as np
+import pickle
 import sys
 
 def make_cnn(input_dim, num_of_classes):
@@ -29,11 +30,11 @@ def make_cnn(input_dim, num_of_classes):
 
 if __name__ == '__main__':
 
-    action = sys.argv[1]
-    if action == '--debug':
-        # run gradient check on one data point.
-        difference = grad_check()
-        print (difference)
+    if len(sys.argv) == 2:
+        action = sys.argv[1]
+        if action == '--debug':
+            # run gradient check on one data point.
+            grad_check()
     else:
         train_set_x, train_set_y, test_set_x, test_set_y, classes = load_dataset()
         num_of_classes = len(classes)
@@ -44,7 +45,9 @@ if __name__ == '__main__':
         layers = make_cnn(input_dim, num_of_classes)
         cnn = CNN(layers)
         cnn, costs = Adam(model=cnn, X_train=train_set_x,
-                      y_train=train_set_y, epoch=10,
+                      y_train=train_set_y, epoch=30,
                       learning_rate=0.001, X_test=test_set_x,
                       y_test=test_set_y, minibatch_size=64).minimize()
-        print (costs)
+
+        with open("costs.txt", "wb") as fp:  # Pickling
+            pickle.dump(costs, fp)
