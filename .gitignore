@@ -5,3 +5,5 @@ costs.txt
 *.log
 *.png
 *.csv
+.idea/
+.DS_Store
