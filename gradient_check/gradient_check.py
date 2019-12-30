@@ -1,7 +1,7 @@
 import numpy as np
 from utils.cnn_utils import load_dataset
-from loss.softmax import SoftmaxLoss
-from layers.convolution import  Convolution
+from loss.softmax import softmaxloss
+from layers.convolution import Convolution
 from layers.relu import Relu
 from layers.pooling import Maxpool
 from layers.flatten import Flatten
@@ -14,7 +14,7 @@ from tqdm import tqdm
 def make_cnn(input_dim, num_of_classes):
     conv1 = Convolution(input_dim=input_dim, pad=2,
                         stride=2,
-                        num_filters=1,
+                        num_filters=10,
                         filter_size=3, seed=1)
     relu1 = Relu()
     maxpool1 = Maxpool(input_dim=conv1.output_dim,
@@ -91,7 +91,7 @@ def compare(new_param, old_param):
     for index in range(len(new_param)):
         if len(new_param[index]) is not 0:
             w_value = np.sum(new_param[index][0] != old_param[index][0])
-            b_value = np.sum(new_param[index][1] !=  old_param[index][1])
+            b_value = np.sum(new_param[index][1] != old_param[index][1])
             different_value.append(w_value)
             different_value.append(b_value)
         else:
@@ -101,13 +101,15 @@ def compare(new_param, old_param):
 def grad_check():
 
     train_set_x, train_set_y, test_set_x, test_set_y, n_class = load_data()
-    train_set_x = train_set_x[0:1]
-    train_set_y = train_set_y[:, 0:1]
+    # select randomly 2 data points from training data
+    n = 2
+    index = np.random.choice(train_set_x.shape[0], n)
+    train_set_x = train_set_x[index]
+    train_set_y = train_set_y[:, index]
     cnn = make_model(train_set_x, n_class)
     print (cnn.layers)
-
     A = cnn.forward(train_set_x)
-    loss, dA = SoftmaxLoss(A, train_set_y)
+    loss, dA = softmaxloss(A, train_set_y)
     assert (A.shape == dA.shape)
     grads = cnn.backward(dA)
     grads_values = grads_to_vector(grads)
@@ -117,7 +119,7 @@ def grad_check():
     J_plus = np.zeros((num_parameters, 1))
     J_minus = np.zeros((num_parameters, 1))
     gradapprox = np.zeros((num_parameters, 1))
-    print (num_parameters)
+    print ('number of parameters: ', num_parameters)
     epsilon = 1e-7
     assert (len(grads_values) == len(parameters_values))
     for i in tqdm(range(0, num_parameters)):
@@ -130,7 +132,7 @@ def grad_check():
         assert ( difference == 1) # make sure only one parameter is changed
         cnn.params = new_param
         A = cnn.forward(train_set_x)
-        J_plus[i], _ = SoftmaxLoss(A, train_set_y)
+        J_plus[i], _ = softmaxloss(A, train_set_y)
 
         thetaminus = copy.deepcopy(parameters_values)
         thetaminus[i][0] = thetaminus[i][0] - epsilon
@@ -139,7 +141,7 @@ def grad_check():
         assert (difference == 1)  # make sure only one parameter is changed
         cnn.params = new_param
         A = cnn.forward(train_set_x)
-        J_minus[i], _ = SoftmaxLoss(A, train_set_y)
+        J_minus[i], _ = softmaxloss(A, train_set_y)
 
         gradapprox[i] = (J_plus[i] - J_minus[i]) / (2 * epsilon)
 

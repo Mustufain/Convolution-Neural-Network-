@@ -5,6 +5,7 @@ import time
 
 
 class Adam(object):
+    """Implementation of Adam optimization algorithm"""
 
     def __init__(self, model, X_train, y_train,
                  learning_rate, epoch, minibatch_size, X_test, y_test):

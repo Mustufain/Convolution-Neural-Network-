@@ -3,3 +3,5 @@ nohup.out
 test.txt
 costs.txt
 *.log
+*.png
+*.csv

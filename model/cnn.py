@@ -1,4 +1,4 @@
-from loss.softmax import SoftmaxLoss, softmax
+from loss.softmax import softmaxloss, softmax
 import numpy as np
 
 
@@ -35,11 +35,11 @@ class CNN(object):
 
         Returns:
         loss -- Softmax loss -- float
-        grads -- gradients backpropogated through each layer
+        grads -- gradients backpropagated through each layer
 
         """
         A = self.forward(X)
-        loss, dA = SoftmaxLoss(A, y)
+        loss, dA = softmaxloss(A, y)
         assert (A.shape == dA.shape)
         grads = self.backward(dA)
         return loss, grads

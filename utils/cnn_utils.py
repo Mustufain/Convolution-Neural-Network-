@@ -1,7 +1,8 @@
 import numpy as np
 import h5py
 import math
-
+from pylab import imread,subplot,imshow,title,gray,figure,show,NullLocator
+import matplotlib.pyplot as plt
 
 def load_dataset():
     """
@@ -78,3 +79,46 @@ def get_minibatches(X, Y, mini_batch_size=64):
         mini_batches.append(mini_batch)
 
     return mini_batches
+
+def plot_convolution_layer(input):
+    num = 1
+    for channel in range(input.shape[-1]):
+        result = input[:, :, channel]
+        result = result.reshape(input.shape[0], input.shape[1])
+        ax = subplot(5, 2, num, frame_on=False)
+        ax.xaxis.set_major_locator(NullLocator())  # remove ticks
+        ax.yaxis.set_major_locator(NullLocator())
+        num += 1
+        plt.imshow(result, origin='upper')
+        plt.title('channel #' + str(channel))
+    plt.tight_layout()
+    plt.savefig('convolution_activations.png')
+
+def plot_relu_layer(input):
+    num = 1
+    for channel in range(input.shape[-1]):
+        result = input[:, :, channel]
+        result = result.reshape(input.shape[0], input.shape[1])
+        ax = subplot(5, 2, num, frame_on=False)
+        ax.xaxis.set_major_locator(NullLocator())  # remove ticks
+        ax.yaxis.set_major_locator(NullLocator())
+        num += 1
+        plt.imshow(result, origin='upper')
+        plt.title('channel #' + str(channel))
+    plt.tight_layout()
+    plt.savefig('relu_activations.png')
+
+def plot_maxpool_layer(input):
+    num = 1
+    for channel in range(input.shape[-1]):
+        result = input[:, :, channel]
+        result = result.reshape(input.shape[0], input.shape[1])
+        ax = subplot(5, 2, num, frame_on=False)
+        ax.xaxis.set_major_locator(NullLocator())  # remove ticks
+        ax.yaxis.set_major_locator(NullLocator())
+        num += 1
+        plt.imshow(result, origin='upper')
+        plt.title('channel #' + str(channel))
+    plt.tight_layout()
+    plt.savefig('maxpool_activations.png')
+

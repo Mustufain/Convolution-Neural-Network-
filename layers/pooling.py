@@ -58,7 +58,6 @@ class Maxpool(object):
                     for c in range(self.n_C):
                         vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
                             h, w, self.filter_size, self.stride)
-                        #if horiz_end <= a_prev.shape[1] and vert_end <= a_prev.shape[0]:
                         a_slice_prev = a_prev[
                                 vert_start:vert_end, horiz_start:horiz_end, c]
                         Z[i, h, w, c] = np.max(a_slice_prev)
@@ -74,7 +73,7 @@ class Maxpool(object):
 
         Returns:
         mask -- Array of the same shape as window, contains a True at the
-                position corresponding to the max entry of iamge_slice.
+                position corresponding to the max entry of image_slice.
 
         """
         mask = np.max(image_slice)
@@ -104,7 +103,6 @@ class Maxpool(object):
                     for c in range(n_C):
                         vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
                             h, w, self.filter_size, self.stride)
-                        #if horiz_end <= a_prev.shape[1] and vert_end <= a_prev.shape[0]:  # bounds
                         a_prev_slice = a_prev[
                                 vert_start:vert_end, horiz_start:horiz_end, c]
                         mask = self.create_mask_from_window(a_prev_slice)
@@ -113,3 +111,6 @@ class Maxpool(object):
                                 c] += mask * dA[i, h, w, c]
         assert(dA_prev.shape == self.A_prev.shape)
         return dA_prev, []
+
+
+

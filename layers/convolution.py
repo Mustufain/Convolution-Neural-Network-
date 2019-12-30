@@ -17,12 +17,7 @@ class Convolution(object):
         self.output_dim = (self.n_H, self.n_W, self.n_C)
         self.W = np.random.randn(
             self.filter_size, self.filter_size, self.input_dim[-1], num_filters) / np.sqrt(num_filters / 2.)
-        #self.W = np.random.normal(  # Xavier Initialization
-        #    loc=0.0, scale=np.sqrt(
-        #        2 / ((self.filter_size * self.filter_size * self.input_dim[-1]))),
-        #    size=(self.filter_size, self.filter_size, self.input_dim[-1], self.num_filters))
         self.b = np.zeros(shape=(1, 1, 1, self.num_filters))
-
         self.params = [self.W, self.b]
 
     def zero_pad(self, X, pad):
@@ -105,6 +100,7 @@ class Convolution(object):
         m, n_H_prev, n_W_prev, n_C_prev = self.A_prev.shape
         Z = np.zeros((m, self.n_H, self.n_W, self.n_C))
         A_prev_pad = self.zero_pad(self.A_prev, self.pad)
+
         for i in range(m):
             a_prev_pad = A_prev_pad[i, :, :, :]
             for h in range(self.n_H):
@@ -112,12 +108,10 @@ class Convolution(object):
                     for c in range(n_C):
                         vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
                             h, w, self.filter_size, self.stride)
-                        #if horiz_end <= a_prev_pad.shape[1] and vert_end <= a_prev_pad.shape[0]:
                         a_slice_prev = a_prev_pad[
                                 vert_start:vert_end, horiz_start:horiz_end, :]
                         Z[i, h, w, c] = self.convolve(
                                 a_slice_prev, self.params[0][:, :, :, c], self.params[1][:, :, :, c])
-
         assert (Z.shape == (m, self.n_H, self.n_W, self.n_C))
         return Z
 
@@ -155,7 +149,6 @@ class Convolution(object):
                     for c in range(n_C):
                         vert_start, vert_end, horiz_start, horiz_end = self.get_corners(
                             h, w, self.filter_size, self.stride)
-                        #if horiz_end <= a_prev_pad.shape[1] and vert_end <= a_prev_pad.shape[0]:  # bounds
                         a_slice_prev = a_prev_pad[
                                 vert_start:vert_end, horiz_start:horiz_end, :]
                         da_prev_pad[
@@ -165,6 +158,6 @@ class Convolution(object):
 
             dA_prev[i, :, :, :] = da_prev_pad[self.pad:-self.pad, self.pad:-self.pad, :]
         assert(dA_prev.shape == (m, n_H_prev, n_W_prev, n_C_prev))
-
         return dA_prev, [dW, db]
+
 
