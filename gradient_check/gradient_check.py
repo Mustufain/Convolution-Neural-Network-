@@ -107,7 +107,7 @@ def grad_check():
     train_set_x = train_set_x[index]
     train_set_y = train_set_y[:, index]
     cnn = make_model(train_set_x, n_class)
-    print (cnn.layers)
+    print(cnn.layers)
     A = cnn.forward(train_set_x)
     loss, dA = softmaxloss(A, train_set_y)
     assert (A.shape == dA.shape)
@@ -144,6 +144,14 @@ def grad_check():
         J_minus[i], _ = softmaxloss(A, train_set_y)
 
         gradapprox[i] = (J_plus[i] - J_minus[i]) / (2 * epsilon)
+
+    #import pandas as pd
+    #grad_approx = pd.DataFrame(gradapprox)
+    #grad_values = pd.DataFrame(grads_values)
+    #grad_approx.columns = ['grad_approx']
+    #grad_values.columns = ['grad_values']
+    #grad_approx.to_csv('gradapprox.csv', index=False)
+    #grad_values.to_csv('gradvalues.csv', index=False)
 
     numerator = np.linalg.norm(gradapprox - grads_values)
     denominator = np.linalg.norm(grads_values) + np.linalg.norm(gradapprox)

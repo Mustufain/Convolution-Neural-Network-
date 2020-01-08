@@ -26,7 +26,21 @@ Adam optimizer is used for training the network.
 5. ```python run.py --debug``` ; Run the network in debug mode which does the gradient checking to make sure backpropogation is correct. 
 6. ```pytest``` ; Runs all the tests for smooth running of forward propogation.   
 
+### Docker
+
+You can also use docker for running the network. 
+
+#### Prerequisites 
+
+1. [Install Docker](https://docs.docker.com/install/)
+1. Pull the docker image : ```docker pull mustufain/cnn-docker```
+2. Train CNN : ``` docker run -t mustufain/cnn-docker ```
+3. Gradient Check CNN : ```docker run -t mustufain/cnn-docker --debug```
+4. Run all test for checking forward propogation : ```docker run --entrypoint "pytest" mustufain/cnn-docker```
+
+
 ## Credits 
+
 1. Andrew Ng [course](https://www.coursera.org/learn/convolutional-neural-networks-tensorflow) on Coursera.
 2. [Alex net](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
 3. [Adam optimizer](https://arxiv.org/pdf/1412.6980.pdf) 

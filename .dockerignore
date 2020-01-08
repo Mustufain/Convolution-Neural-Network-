@@ -1,0 +1,7 @@
+*.csv
+*.png
+*.log
+.git
+.cache
+/__pycache__/*
+__pycache__
